@@ -1,19 +1,25 @@
-hash = {"key1"=>"val1","key2"=>"val2"}
-string = ""
-hash.each{|k,v| string<< "#{k} is #{v.reverse}\n"}
-puts string
-string.reverse!
-string.each_byte{|o|puts ("#{o.chr}")}
-octal = "\000\001\002\003"
-octal.each_byte{|o|puts o}
-hexa = "\x00\x01\x02\x03"
-hexa.each_byte{|o|puts "#{o}" }
+# require 'ripper'
+# Ripper.sexp("1+1").to_a
+# require 'pp'
+# pp RubyVM::InstructionSequence.compile('1+1').to_a
 
-open('smiley.html','wb') do |f|
-    f << '<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">'
-    f << "\xe2\x98\xBA"
-
+module MyMonkeyPatches
+    refine String do
+        def length
+            30
+        end
+    end
 end
 
-puts (:symbol.object_id)
-"food\nbar".each {|c| puts c}
+class TestMyMonkey 
+    using MyMonkeyPatches
+    def string_length(string)
+        string.length
+    end
+end
+
+string = "foobar"
+puts string.length
+
+puts TestMyMonkey.new.string_length(string)
+puts string.length
